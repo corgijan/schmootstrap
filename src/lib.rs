@@ -4,6 +4,15 @@ pub fn schmfy(source: String) -> String {
         return source;
     }
 
+    if source.len() == 0 {
+        return source;
+    }
+
+    // can't be empty
+    if !source.chars().next().unwrap().is_alphabetic() {
+        return source;
+    }
+
     // if source is subsite (e.g. news/fsr), schmfy all parts separately
     if source.contains('/') {
         return source
