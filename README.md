@@ -9,7 +9,7 @@ use schmfy::schmfy;
 fn improve_text(text: &str) {
     let improved_text = schmfy(text);
     println!("Old and boring: {}", text);
-    println!("Improved and great: {}", text);
+    println!("Improved and great: {}", improved_text);
 }
 ```
 
