@@ -116,17 +116,15 @@ pub fn schmfy(source: &str) -> String {
 
     // schmfy first char if word is no longer than 3
     if source.len() <= 3 && case != CaseType::FstUcase {
-        let (prefix, suffix) = source.split_at(1);
+        let first_c_size = source.chars().next().unwrap().len_utf8();
+        let (prefix, suffix) = source.split_at(first_c_size);
         let c = prefix.chars().next().unwrap_or('-');
         return restore_case(schmfy_char(c) + suffix, case);
     }
 
     // Normal words - replace prefix before first vocal
     // with "schm"
-    let vok_pos = source
-        .chars()
-        .position(|c| "aeiouäöü".contains(c))
-        .unwrap_or(0);
+    let vok_pos = source.find(|c| "aeiouäöü".contains(c)).unwrap_or(0);
 
     let (_, suffix) = source.split_at(vok_pos);
 
@@ -245,8 +243,9 @@ This is a Markdown codebox
 | This | is |
 |---|---|
 | a | Markdown |
-| table | ! |"),
-"
+| table | ! |"
+            ),
+            "
 ```
 Schmis schmis schma Schmarkdown schmodebox
 ```
