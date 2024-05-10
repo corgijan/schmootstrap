@@ -1,4 +1,5 @@
 //! schmfy - a library to schmfy everything
+use wasm_bindgen::prelude::*;
 
 #[derive(PartialEq, Copy, Clone)]
 enum CaseType {
@@ -63,6 +64,7 @@ fn restore_case(txt: String, case: CaseType) -> String {
 }
 
 /// Schmfies any str, preserving case and everything non-alphabetical
+#[wasm_bindgen]
 pub fn schmfy(source: &str) -> String {
     // instantly return if input is non-alphabetic single char
     if source.len() == 1 && !source.chars().next().unwrap().is_alphabetic() {

@@ -1,6 +1,6 @@
 [package]
 name = "schmfy"
-version = "0.2.2"
+version = "0.3.0"
 edition = "2021"
 license = "MIT OR Apache-2.0"
 description = "Schmfication library"
@@ -8,4 +8,8 @@ readme = "README.md"
 repository = "https://git.flueren.eu/JonOfUs/Schmfy"
 documentation = "https://docs.rs/schmfy"
 
+[lib]
+crate-type = ["cdylib"]
+
 [dependencies]
+wasm-bindgen = "0.2"
