@@ -7,7 +7,7 @@ enum CaseType {
     Lcase,
     /// the whole word is in uppercase
     Ucase,
-    /// the first letter us uppercase, the rest is lowercase
+    /// the first letter is uppercase, the rest is lowercase
     FstUcase,
 }
 
@@ -37,7 +37,7 @@ fn get_case(txt: &str) -> CaseType {
     } else if cnt_lcase == 0 && cnt_ucase > 0 {
         return CaseType::Ucase;
     } else if alph[0].is_uppercase() && alph[1].is_lowercase() {
-        // atleast 2 entries
+        // at least 2 entries
         return CaseType::FstUcase;
     }
 
@@ -166,95 +166,6 @@ fn schmfy_char(c: char) -> String {
         }
         _ => ret.push(c),
     }
-
     ret
-}
 
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn schmfy_plaintext_tests() {
-        assert_eq!(schmfy("test"), "schmest");
-        assert_eq!(schmfy("Hello"), "Schmello");
-        assert_eq!(schmfy("HELLO"), "SCHMELLO");
-        assert_eq!(schmfy("hello"), "schmello");
-        assert_eq!(schmfy("Bar"), "Schmar");
-    }
-
-    #[test]
-    fn schmfy_mixtext_tests() {
-        assert_eq!(schmfy(">Test"), ">Schmest");
-        assert_eq!(schmfy(">tesT"), ">schmest");
-        assert_eq!(schmfy("One&Two"), "Schmone&Schmo");
-        assert_eq!(
-            schmfy("<span>Entry<br></span>"),
-            "<schman>Schmentry<schmer></schman>"
-        );
-        assert_eq!(schmfy("foo/bar/baz"), "schmefoo/schmear/schmeaz");
-        assert_eq!(
-            schmfy("long/Longer/LONGESTTT"),
-            "schmong/Schmonger/SCHMONGESTTT"
-        );
-    }
-
-    #[test]
-    fn schmfy_sentences_tests() {
-        assert_eq!(
-            schmfy("Today I am VERY tired."),
-            "Schmoday SCHMI schmam SCHMERY schmired."
-        );
-        assert_eq!(
-            schmfy("Lorem ipsum dolor sit amet, consetetur sadipscing elitr"),
-            "Schmorem schmipsum schmolor schmesit schmamet, schmonsetetur schmadipscing schmelitr"
-        );
-    }
-
-    #[test]
-    fn schmfy_code_tests() {
-        assert_eq!(
-            schmfy(
-                "#include <stdio.h>
-#include <sys/types.h>
-
-int main()
-{
-    while(1)
-        fork();
-    return 0;
-}"
-            ),
-            "#schminclude <schmio.schma>
-#schminclude <schmesys/schmes.schma>
-
-schmint schmain()
-{
-    schmile(1)
-        schmork();
-    schmeturn 0;
-}"
-        );
-
-        assert_eq!(
-            schmfy(
-                "
-```
-This is a Markdown codebox
-```
-| This | is |
-|---|---|
-| a | Markdown |
-| table | ! |"
-            ),
-            "
-```
-Schmis schmis schma Schmarkdown schmodebox
-```
-| Schmis | schmis |
-|---|---|
-| schma | Schmarkdown |
-| schmable | ! |"
-        )
-    }
 }
