@@ -1,5 +1,7 @@
 # Schmfy library
 This library is able to schmfy any text.
+fork of https://git.flueren.eu/JonOfUs/Schmfy
+## This is a bootstrapped variant (schmfied)
 
 ## Usage
 Example usage:
