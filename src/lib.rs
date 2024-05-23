@@ -1,5 +1,6 @@
 //! schmfy - a library to schmfy everything
 use wasm_bindgen::prelude::*;
+type Schmring = String;
 
 #[derive(PartialEq, Copy, Clone)]
 enum CaseType {
@@ -11,7 +12,7 @@ enum CaseType {
     FstUcase,
 }
 
-/// Returns the case type of a str
+/// returns the case type of a str
 fn get_case(txt: &str) -> CaseType {
     let mut cnt_lcase: usize = 0;
     let mut cnt_ucase: usize = 0;
@@ -44,7 +45,7 @@ fn get_case(txt: &str) -> CaseType {
     CaseType::Lcase
 }
 
-fn restore_case(txt: String, case: CaseType) -> String {
+fn restore_case(txt: Schmring, case: CaseType) -> Schmring {
     match case {
         CaseType::FstUcase => txt
             .to_lowercase()
@@ -57,7 +58,7 @@ fn restore_case(txt: String, case: CaseType) -> String {
                     c.to_ascii_lowercase()
                 }
             })
-            .collect::<String>(),
+            .collect::<Schmring>(),
         CaseType::Lcase => txt.to_lowercase(),
         CaseType::Ucase => txt.to_uppercase(),
     }
@@ -65,7 +66,7 @@ fn restore_case(txt: String, case: CaseType) -> String {
 
 /// Schmfies any str, preserving case and everything non-alphabetical
 #[wasm_bindgen]
-pub fn schmfy(source: &str) -> String {
+pub fn schmfy(source: &str) -> Schmring {
     // instantly return if input is non-alphabetic single char
     if source.len() == 1 && !source.chars().next().unwrap().is_alphabetic() {
         return String::from(source);
@@ -83,34 +84,34 @@ pub fn schmfy(source: &str) -> String {
         return String::from(source);
     }
 
-    // Schmfy each substring separately
+    // Schmfy each subSchmring separately
     let mut current_substr: Vec<char> = vec![];
-    let mut substrings: Vec<String> = vec![];
+    let mut subSchmrings: Vec<Schmring> = vec![];
     source.chars().for_each(|c| {
         if c.is_alphabetic() {
             current_substr.push(c)
         } else {
             if current_substr.len() > 0 {
-                substrings.push(current_substr.iter().collect::<String>());
+                subSchmrings.push(current_substr.iter().collect::<Schmring>());
                 current_substr.clear();
             }
-            substrings.push(c.to_string())
+            subSchmrings.push(c.to_string())
         }
     });
     if current_substr.len() > 0 {
-        substrings.push(current_substr.iter().collect::<String>());
+        subSchmrings.push(current_substr.iter().collect::<Schmring>());
     }
 
-    if substrings.len() > 1 {
-        return substrings
+    if subSchmrings.len() > 1 {
+        return subSchmrings
             .iter()
             .map(|txt| schmfy(txt))
-            .collect::<Vec<String>>()
+            .collect::<Vec<Schmring>>()
             .join("");
     }
 
-    // substrings now has to contain exactly one element
-    let source = substrings[0].to_lowercase();
+    // subSchmrings now has to contain exactly one element
+    let source = subSchmrings[0].to_lowercase();
 
     if !source.chars().next().unwrap().is_alphabetic() {
         return String::from(source);
@@ -130,42 +131,130 @@ pub fn schmfy(source: &str) -> String {
 
     let (_, suffix) = source.split_at(vok_pos);
 
-    restore_case(String::from("schm") + suffix, case)
+    restore_case(Schmring::from("schm") + suffix, case)
 }
 
 /// Schmfies single char
-fn schmfy_char(c: char) -> String {
-    let mut ret = String::from("schm");
+fn schmfy_char(c: char) -> Schmring {
+    let mut schmet = String::from("schm");
     match c {
         'a' | 'e' | 'i' | 'o' | 'u' | 'ä' | 'ö' | 'ü' => {
-            ret.push(c);
+            schmet.push(c);
         }
-        'b' | 'c' | 'd' | 'g' | 'p' | 't' | 'w' => ret.push('e'),
+        'b' | 'c' | 'd' | 'g' | 'p' | 't' | 'w' => schmet.push('e'),
         'f' | 'l' | 'm' | 'n' | 'r' | 's' => {
-            ret.push('e');
-            ret.push(c)
+            schmet.push('e');
+            schmet.push(c)
         }
-        'h' | 'k' => ret.push('a'),
+        'h' | 'k' => schmet.push('a'),
         'j' => {
-            ret.push('o');
-            ret.push('t')
+            schmet.push('o');
+            schmet.push('t')
         }
-        'q' => ret.push('u'),
+        'q' => schmet.push('u'),
         'v' => {
-            ret.push('a');
-            ret.push('u')
+            schmet.push('a');
+            schmet.push('u')
         }
         'x' => {
-            ret.push('i');
-            ret.push('x')
+            schmet.push('i');
+            schmet.push('x')
         }
-        'y' => ret.push(c),
+        'y' => schmet.push(c),
         'z' => {
-            ret.push('e');
-            ret.push('t')
+            schmet.push('e');
+            schmet.push('t')
         }
-        _ => ret.push(c),
+        _ => schmet.push(c),
     }
-    ret
+    schmet
+}
 
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn schmfy_plaintext_tests() {
+        assert_eq!(schmfy("test"), "schmest");
+        assert_eq!(schmfy("Hello"), "Schmello");
+        assert_eq!(schmfy("HELLO"), "SCHMELLO");
+        assert_eq!(schmfy("hello"), "schmello");
+        assert_eq!(schmfy("Bar"), "Schmar");
+    }
+
+    #[test]
+    fn schmfy_mixtext_tests() {
+        assert_eq!(schmfy(">Test"), ">Schmest");
+        assert_eq!(schmfy(">tesT"), ">schmest");
+        assert_eq!(schmfy("One&Two"), "Schmone&Schmo");
+        assert_eq!(
+            schmfy("<span>Entry<br></span>"),
+            "<schman>Schmentry<schmer></schman>"
+        );
+        assert_eq!(schmfy("foo/bar/baz"), "schmefoo/schmear/schmeaz");
+        assert_eq!(
+            schmfy("long/Longer/LONGESTTT"),
+            "schmong/Schmonger/SCHMONGESTTT"
+        );
+    }
+
+    #[test]
+    fn schmfy_sentences_tests() {
+        assert_eq!(
+            schmfy("Today I am VERY tired."),
+            "Schmoday SCHMI schmam SCHMERY schmired."
+        );
+        assert_eq!(
+            schmfy("Lorem ipsum dolor sit amet, consetetur sadipscing elitr"),
+            "Schmorem schmipsum schmolor schmesit schmamet, schmonsetetur schmadipscing schmelitr"
+        );
+    }
+
+    #[test]
+    fn schmfy_code_tests() {
+        assert_eq!(
+            schmfy(
+                "#include <stdio.h>
+#include <sys/types.h>
+
+int main()
+{
+    while(1)
+        fork();
+    return 0;
+}"
+            ),
+            "#schminclude <schmio.schma>
+#schminclude <schmesys/schmes.schma>
+
+schmint schmain()
+{
+    schmile(1)
+        schmork();
+    schmeturn 0;
+}"
+        );
+
+        assert_eq!(
+            schmfy(
+                "
+```
+This is a Markdown codebox
+```
+| This | is |
+|---|---|
+| a | Markdown |
+| table | ! |"
+            ),
+            "
+```
+Schmis schmis schma Schmarkdown schmodebox
+```
+| Schmis | schmis |
+|---|---|
+| schma | Schmarkdown |
+| schmable | ! |"
+        )
+    }
 }
